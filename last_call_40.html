@@ -1,0 +1,1281 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>LAST CALL | 40代の黄昏と意地 - ショートストーリー</title>
+  <!-- Google Fonts: Shippori Mincho & Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Shippori+Mincho:wght@400;500;600;700;800&family=Zen+Kaku+Gothic+New:wght@400;500;700&display=swap" rel="stylesheet">
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            amber: {
+              450: '#d98b2b',
+              550: '#b86c12',
+              950: '#1c130b',
+            },
+            bourbon: {
+              50: '#fbf7f1',
+              100: '#f5ecd9',
+              200: '#ebd8b2',
+              400: '#ce944a',
+              500: '#ba772e',
+              600: '#9b5821',
+              800: '#462711',
+              900: '#2c190d',
+              950: '#190e07',
+            },
+            slate: {
+              850: '#161e2e',
+              925: '#0b111e',
+              950: '#070a12',
+            }
+          },
+          fontFamily: {
+            serif: ['"Shippori Mincho"', 'serif'],
+            sans: ['"Zen Kaku Gothic New"', 'sans-serif'],
+            display: ['"Shippori Mincho"', 'serif'],
+          }
+        }
+      }
+    }
+  </script>
+  <style>
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b111e;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #2c190d;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #9b5821;
+    }
+
+    /* Ambient noise background texture */
+    .bg-grain {
+      background-image: radial-gradient(rgba(217, 139, 43, 0.04) 1px, transparent 0);
+      background-size: 24px 24px;
+    }
+
+    /* Text selection */
+    ::selection {
+      background: #ba772e;
+      color: #fff;
+    }
+
+    /* Smooth page transitions */
+    .view-section {
+      transition: opacity 0.25s ease-in-out;
+    }
+
+    /* Vertical text support option */
+    .vertical-rl {
+      writing-mode: vertical-rl;
+      text-orientation: upright;
+    }
+  </style>
+</head>
+<body class="bg-[#090d16] text-[#e2dfd9] font-sans antialiased min-h-screen flex flex-col selection:bg-amber-600 selection:text-white bg-grain">
+
+  <!-- Header / Navigation -->
+  <header class="sticky top-0 z-40 bg-[#090d16]/90 backdrop-blur-md border-b border-bourbon-800/40">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
+      <div class="flex items-center space-x-3 cursor-pointer" onclick="switchTab('feed')">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-bourbon-500 to-bourbon-800 flex items-center justify-center shadow-lg shadow-bourbon-950/60 border border-bourbon-400/30">
+          <i data-lucide="glass-water" class="w-5 h-5 text-amber-200"></i>
+        </div>
+        <div>
+          <span class="font-serif font-bold text-lg tracking-wider text-amber-100 flex items-center gap-1.5">
+            LAST CALL
+            <span class="text-[10px] font-sans uppercase tracking-widest px-1.5 py-0.5 rounded bg-bourbon-900/80 border border-bourbon-700/60 text-amber-300">40s Bitter</span>
+          </span>
+          <p class="text-[10px] text-zinc-400 font-serif tracking-widest hidden sm:block">黄昏と、少しの意地と、一杯の酒。</p>
+        </div>
+      </div>
+
+      <!-- Navigation tabs -->
+      <nav class="flex items-center gap-1 sm:gap-2">
+        <button onclick="switchTab('feed')" id="nav-feed" class="px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-amber-300 bg-bourbon-900/60 border border-bourbon-700/50">
+          <i data-lucide="book-open" class="w-4 h-4"></i>
+          <span>物語を読む</span>
+        </button>
+        <button onclick="switchTab('generator')" id="nav-generator" class="px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-amber-200 hover:bg-zinc-800/50">
+          <i data-lucide="sparkles" class="w-4 h-4"></i>
+          <span>物語を紡ぐ</span>
+        </button>
+        <button onclick="switchTab('library')" id="nav-library" class="px-3.5 py-2 rounded-lg text-sm font-medium transition flex items-center gap-2 text-zinc-400 hover:text-amber-200 hover:bg-zinc-800/50 relative">
+          <i data-lucide="bookmark" class="w-4 h-4"></i>
+          <span>書斎</span>
+          <span id="nav-saved-count" class="hidden absolute -top-1 -right-1 text-[10px] bg-bourbon-600 text-white rounded-full w-4 h-4 flex items-center justify-center font-mono">0</span>
+        </button>
+      </nav>
+
+      <!-- Ambient Sound Player Toggle -->
+      <div class="flex items-center gap-2">
+        <button id="soundToggleBtn" onclick="toggleSoundMenu()" class="p-2 rounded-lg border border-zinc-700/60 bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 hover:text-amber-300 transition flex items-center gap-1.5 text-xs font-serif" title="背景音（アンビエント）">
+          <i data-lucide="volume-2" id="soundIcon" class="w-4 h-4 text-zinc-400"></i>
+          <span class="hidden md:inline" id="soundLabel">夜の雨音: OFF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Ambient Sound Popover Menu -->
+  <div id="soundMenu" class="hidden fixed top-16 right-4 sm:right-6 z-50 w-72 bg-[#121824] border border-bourbon-800/60 rounded-xl p-4 shadow-2xl backdrop-blur-xl">
+    <div class="flex items-center justify-between pb-3 border-b border-zinc-800">
+      <h4 class="text-xs font-bold text-amber-200 uppercase tracking-widest font-serif flex items-center gap-1.5">
+        <i data-lucide="headphones" class="w-3.5 h-3.5"></i>
+        BGM / アンビエント
+      </h4>
+      <span class="text-[10px] text-zinc-400">WebAudio合成</span>
+    </div>
+    <div class="mt-3 space-y-2">
+      <button onclick="setSoundTrack('rain')" class="sound-option w-full px-3 py-2 rounded-lg text-left text-xs flex items-center justify-between hover:bg-zinc-800/80 transition border border-transparent text-zinc-300">
+        <span class="flex items-center gap-2"><i data-lucide="cloud-rain" class="w-3.5 h-3.5 text-blue-400"></i> 静かな深夜の雨</span>
+        <span class="state-indicator text-[10px] text-zinc-500">再生</span>
+      </button>
+      <button onclick="setSoundTrack('bar')" class="sound-option w-full px-3 py-2 rounded-lg text-left text-xs flex items-center justify-between hover:bg-zinc-800/80 transition border border-transparent text-zinc-300">
+        <span class="flex items-center gap-2"><i data-lucide="glass-water" class="w-3.5 h-3.5 text-amber-400"></i> 路地裏バーのざわめき</span>
+        <span class="state-indicator text-[10px] text-zinc-500">再生</span>
+      </button>
+      <button onclick="setSoundTrack('cafe')" class="sound-option w-full px-3 py-2 rounded-lg text-left text-xs flex items-center justify-between hover:bg-zinc-800/80 transition border border-transparent text-zinc-300">
+        <span class="flex items-center gap-2"><i data-lucide="coffee" class="w-3.5 h-3.5 text-amber-600"></i> 純喫茶のレコード針音</span>
+        <span class="state-indicator text-[10px] text-zinc-500">再生</span>
+      </button>
+      <button onclick="stopSound()" class="w-full mt-2 py-1.5 rounded-lg text-xs text-center text-red-400 hover:bg-red-950/30 transition border border-red-900/30">
+        音声を停止する
+      </button>
+    </div>
+  </div>
+
+  <!-- Main Content Areas -->
+  <main class="flex-grow max-w-6xl w-full mx-auto px-4 sm:px-6 py-8">
+
+    <!-- ================= VIEW 1: FEED / LIST ================= -->
+    <section id="view-feed" class="view-section block">
+      <!-- Hero Banner -->
+      <div class="mb-10 p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-[#17110c] via-[#121620] to-[#0d121c] border border-bourbon-800/50 shadow-2xl relative overflow-hidden">
+        <div class="absolute -right-12 -top-12 w-64 h-64 bg-bourbon-600/10 rounded-full blur-3xl pointer-events-none"></div>
+        <div class="relative z-10 max-w-2xl">
+          <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-bourbon-950/80 border border-bourbon-700/40 text-amber-300 text-xs mb-3 font-serif">
+            <i data-lucide="flame" class="w-3 h-3 text-bourbon-400"></i>
+            <span>40代のための大人の掌編小説</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-serif font-extrabold text-amber-50 tracking-wide leading-snug">
+            男が背負ってきた年月の、<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-bourbon-400">ほんの1分間の隙間に。</span>
+          </h1>
+          <p class="mt-3 text-sm sm:text-base text-zinc-400 font-sans leading-relaxed">
+            部下と上司の板挟み、娘からのそっけないLINE、ふとミラーに映る白髪、昔手放したギター。<br class="hidden sm:inline">
+            言い訳も自慢も要らない。ただ「分かる」とだけ頷いてほしい男たちのための小噺。
+          </p>
+          <div class="mt-5 flex flex-wrap gap-3">
+            <button onclick="switchTab('generator')" class="px-5 py-2.5 rounded-xl bg-gradient-to-r from-bourbon-500 to-bourbon-700 hover:from-bourbon-400 hover:to-bourbon-600 text-white font-medium text-sm flex items-center gap-2 shadow-lg shadow-bourbon-950/80 transition">
+              <i data-lucide="feather" class="w-4 h-4"></i>
+              <span>自分の境遇で話を紡ぐ</span>
+            </button>
+            <button onclick="filterCategory('all')" class="px-4 py-2.5 rounded-xl bg-zinc-900/80 hover:bg-zinc-800 text-zinc-300 border border-zinc-700/50 font-medium text-sm flex items-center gap-2 transition">
+              <i data-lucide="compass" class="w-4 h-4"></i>
+              <span>物語を巡る</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Category Filter Pills -->
+      <div class="flex items-center gap-2 overflow-x-auto pb-4 scrollbar-none text-xs font-serif">
+        <button onclick="filterCategory('all')" class="cat-pill px-4 py-2 rounded-full whitespace-nowrap bg-bourbon-500 text-white font-semibold transition shadow-md shadow-bourbon-950/40">すべて</button>
+        <button onclick="filterCategory('management')" class="cat-pill px-4 py-2 rounded-full whitespace-nowrap bg-zinc-900/90 text-zinc-400 hover:text-amber-200 border border-zinc-800 transition">中間管理職の黄昏</button>
+        <button onclick="filterCategory('family')" class="cat-pill px-4 py-2 rounded-full whitespace-nowrap bg-zinc-900/90 text-zinc-400 hover:text-amber-200 border border-zinc-800 transition">父と娘・家族の距離</button>
+        <button onclick="filterCategory('nostalgia')" class="cat-pill px-4 py-2 rounded-full whitespace-nowrap bg-zinc-900/90 text-zinc-400 hover:text-amber-200 border border-zinc-800 transition">20年前のあいつと夢</button>
+        <button onclick="filterCategory('den')" class="cat-pill px-4 py-2 rounded-full whitespace-nowrap bg-zinc-900/90 text-zinc-400 hover:text-amber-200 border border-zinc-800 transition">居酒屋・サウナ・隠れ家</button>
+        <button onclick="filterCategory('aging')" class="cat-pill px-4 py-2 rounded-full whitespace-nowrap bg-zinc-900/90 text-zinc-400 hover:text-amber-200 border border-zinc-800 transition">身体と老いとプライド</button>
+      </div>
+
+      <!-- Story Cards Grid -->
+      <div id="storiesGrid" class="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered by JS -->
+      </div>
+    </section>
+
+    <!-- ================= VIEW 2: GENERATOR ================= -->
+    <section id="view-generator" class="view-section hidden">
+      <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-8">
+          <span class="text-xs uppercase tracking-widest text-bourbon-400 font-serif font-bold">STORY CRAFTER</span>
+          <h2 class="text-2xl sm:text-3xl font-serif font-bold text-amber-50 mt-1">40代の琴線に刺さる話を量産する</h2>
+          <p class="text-xs sm:text-sm text-zinc-400 mt-2">テーマ、日常の小道具、心のトーンを選ぶだけで、あなたの胸を締め付ける掌編を即座に書き上げます。</p>
+        </div>
+
+        <div class="bg-[#101522] border border-bourbon-800/40 rounded-2xl p-6 sm:p-8 shadow-2xl relative">
+          <form id="generatorForm" onsubmit="handleGenerate(event)" class="space-y-6">
+            
+            <!-- Category Selection -->
+            <div>
+              <label class="block text-xs font-serif text-amber-200 mb-2 font-semibold">1. テーマを選ぶ（男の戦場）</label>
+              <div class="grid grid-cols-2 sm:grid-cols-3 gap-2.5">
+                <label class="cursor-pointer border border-zinc-800 rounded-xl p-3 text-center bg-zinc-900/60 hover:border-bourbon-500/60 transition block has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/60">
+                  <input type="radio" name="genCategory" value="management" checked class="hidden">
+                  <div class="text-xs font-serif text-zinc-200 font-medium">中間管理職の黄昏</div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">板挟み・理不尽・責任</div>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-xl p-3 text-center bg-zinc-900/60 hover:border-bourbon-500/60 transition block has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/60">
+                  <input type="radio" name="genCategory" value="family" class="hidden">
+                  <div class="text-xs font-serif text-zinc-200 font-medium">父と娘・家族の距離</div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">娘の既読スルー・妻の視線</div>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-xl p-3 text-center bg-zinc-900/60 hover:border-bourbon-500/60 transition block has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/60">
+                  <input type="radio" name="genCategory" value="nostalgia" class="hidden">
+                  <div class="text-xs font-serif text-zinc-200 font-medium">手放した夢・旧友</div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">バンド・旧車・あいつの今</div>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-xl p-3 text-center bg-zinc-900/60 hover:border-bourbon-500/60 transition block has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/60">
+                  <input type="radio" name="genCategory" value="den" class="hidden">
+                  <div class="text-xs font-serif text-zinc-200 font-medium">赤提灯とサウナの聖域</div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">孤独なひとり時間・逃げ場</div>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-xl p-3 text-center bg-zinc-900/60 hover:border-bourbon-500/60 transition block has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/60">
+                  <input type="radio" name="genCategory" value="aging" class="hidden">
+                  <div class="text-xs font-serif text-zinc-200 font-medium">老いと健康・男の意地</div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">人間ドック・白髪・老眼</div>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-xl p-3 text-center bg-zinc-900/60 hover:border-bourbon-500/60 transition block has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/60">
+                  <input type="radio" name="genCategory" value="romance" class="hidden">
+                  <div class="text-xs font-serif text-zinc-200 font-medium">すれ違いの残像</div>
+                  <div class="text-[10px] text-zinc-400 mt-0.5">淡い記憶・言えなかった言葉</div>
+                </label>
+              </div>
+            </div>
+
+            <!-- Keyword Prompt -->
+            <div>
+              <div class="flex items-center justify-between mb-1.5">
+                <label class="text-xs font-serif text-amber-200 font-semibold">2. 小道具・キーフレーズ（任意）</label>
+                <button type="button" onclick="randomizeKeyword()" class="text-[11px] text-bourbon-400 hover:text-amber-300 underline font-serif">サイコロを振る</button>
+              </div>
+              <input type="text" id="genKeyword" placeholder="例：カシオのG-SHOCK、煮込み豆腐、深夜のコンビニ、白髪染め" class="w-full bg-zinc-900/90 border border-zinc-700/60 rounded-xl px-4 py-2.5 text-sm text-zinc-200 focus:outline-none focus:border-bourbon-400 transition placeholder-zinc-500">
+              <div class="mt-2 flex flex-wrap gap-1.5 text-[11px] text-zinc-400">
+                <span>定番タグ:</span>
+                <button type="button" onclick="setKeyword('終電間際の駅そば')" class="hover:text-amber-300 bg-zinc-800/60 px-2 py-0.5 rounded">#終電間際の駅そば</button>
+                <button type="button" onclick="setKeyword('娘の冷めた視線')" class="hover:text-amber-300 bg-zinc-800/60 px-2 py-0.5 rounded">#娘の冷めた視線</button>
+                <button type="button" onclick="setKeyword('昔のバンドのデモテープ')" class="hover:text-amber-300 bg-zinc-800/60 px-2 py-0.5 rounded">#昔のバンドのデモテープ</button>
+                <button type="button" onclick="setKeyword('水風呂の吐息')" class="hover:text-amber-300 bg-zinc-800/60 px-2 py-0.5 rounded">#水風呂の吐息</button>
+              </div>
+            </div>
+
+            <!-- Tone Selection -->
+            <div>
+              <label class="block text-xs font-serif text-amber-200 mb-2 font-semibold">3. 読後感のトーン（男の美学）</label>
+              <div class="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                <label class="cursor-pointer border border-zinc-800 rounded-lg p-2.5 text-center bg-zinc-900/50 hover:border-bourbon-500/50 has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/40">
+                  <input type="radio" name="genTone" value="bittersweet" checked class="hidden">
+                  <span class="text-xs text-zinc-300 font-serif block">ビタースイート</span>
+                  <span class="text-[9px] text-zinc-400">ほろ苦さと余韻</span>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-lg p-2.5 text-center bg-zinc-900/50 hover:border-bourbon-500/50 has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/40">
+                  <input type="radio" name="genTone" value="pride" class="hidden">
+                  <span class="text-xs text-zinc-300 font-serif block">哀愁と誇り</span>
+                  <span class="text-[9px] text-zinc-400">不器用な男の意地</span>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-lg p-2.5 text-center bg-zinc-900/50 hover:border-bourbon-500/50 has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/40">
+                  <input type="radio" name="genTone" value="hope" class="hidden">
+                  <span class="text-xs text-zinc-300 font-serif block">少し前向き</span>
+                  <span class="text-[9px] text-zinc-400">明日も歩き出す</span>
+                </label>
+                <label class="cursor-pointer border border-zinc-800 rounded-lg p-2.5 text-center bg-zinc-900/50 hover:border-bourbon-500/50 has-[:checked]:border-bourbon-500 has-[:checked]:bg-bourbon-950/40">
+                  <input type="radio" name="genTone" value="humor" class="hidden">
+                  <span class="text-xs text-zinc-300 font-serif block">自虐とクス笑い</span>
+                  <span class="text-[9px] text-zinc-400">男房客の苦笑い</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Generate Button -->
+            <button type="submit" id="generateBtn" class="w-full py-3.5 rounded-xl bg-gradient-to-r from-bourbon-600 via-bourbon-500 to-amber-500 hover:from-bourbon-500 hover:to-amber-400 text-white font-serif font-bold tracking-widest text-base shadow-xl shadow-bourbon-950/80 transition flex items-center justify-center gap-2">
+              <i data-lucide="pen-tool" class="w-4 h-4"></i>
+              <span>ショートストーリーを生成する</span>
+            </button>
+          </form>
+
+          <!-- Generation Result Preview Box -->
+          <div id="genResultWrapper" class="mt-8 pt-8 border-t border-zinc-800 hidden">
+            <div class="flex items-center justify-between mb-3">
+              <span class="text-xs text-bourbon-300 font-serif uppercase tracking-wider flex items-center gap-1.5">
+                <i data-lucide="sparkle" class="w-3.5 h-3.5"></i> 生成された掌編
+              </span>
+              <div class="flex items-center gap-2">
+                <button onclick="copyGeneratedStory()" class="text-xs text-zinc-400 hover:text-amber-200 flex items-center gap-1 px-2.5 py-1 rounded bg-zinc-800/80">
+                  <i data-lucide="copy" class="w-3 h-3"></i> 本文をコピー
+                </button>
+                <button onclick="saveGeneratedStoryToFeed()" class="text-xs text-amber-300 hover:text-white flex items-center gap-1 px-2.5 py-1 rounded bg-bourbon-700/80">
+                  <i data-lucide="plus-circle" class="w-3 h-3"></i> 一覧に追加
+                </button>
+              </div>
+            </div>
+
+            <div class="bg-[#0b0e16] border border-bourbon-900/60 rounded-xl p-6 sm:p-7">
+              <h3 id="resTitle" class="text-xl font-serif font-bold text-amber-100 tracking-wide mb-2"></h3>
+              <div class="flex items-center gap-3 text-xs text-zinc-400 mb-4 pb-3 border-b border-zinc-800/60">
+                <span id="resTag" class="text-bourbon-400 font-serif"></span>
+                <span>•</span>
+                <span id="resReadTime" class="text-zinc-500">読了時間: 約2分</span>
+              </div>
+              <div id="resBody" class="font-serif leading-relaxed text-zinc-300 text-sm sm:text-base space-y-4 whitespace-pre-line selection:bg-bourbon-700"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= VIEW 3: LIBRARY (SAVED) ================= -->
+    <section id="view-library" class="view-section hidden">
+      <div class="flex items-center justify-between mb-6 pb-4 border-b border-zinc-800">
+        <div>
+          <h2 class="text-2xl font-serif font-bold text-amber-100">書斎（保存した物語）</h2>
+          <p class="text-xs text-zinc-400 mt-1">あなたが心打たれ、手元に残した夜の読書録。</p>
+        </div>
+        <span id="libraryCountText" class="text-xs font-serif px-3 py-1 bg-bourbon-950 border border-bourbon-800 rounded-full text-amber-300">0 編保存中</span>
+      </div>
+
+      <div id="libraryGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <!-- Rendered by JS -->
+      </div>
+      <div id="libraryEmptyState" class="hidden text-center py-20">
+        <i data-lucide="bookmark-x" class="w-12 h-12 text-zinc-600 mx-auto mb-3"></i>
+        <p class="text-zinc-400 font-serif text-sm">まだ保存された物語はありません。</p>
+        <p class="text-xs text-zinc-400 mt-1">ストーリーカードの「保存」ボタンを押すと、ここにアーカイブされます。</p>
+        <button onclick="switchTab('feed')" class="mt-4 px-4 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-amber-200 text-xs font-serif transition">
+          物語一覧へ戻る
+        </button>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- ================= READER MODAL ================= -->
+  <div id="readerModal" class="fixed inset-0 z-50 hidden bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 transition-all">
+    <div id="readerContainer" class="bg-[#0e131d] border border-bourbon-800/60 w-full max-w-3xl max-h-[92vh] rounded-2xl flex flex-col shadow-2xl overflow-hidden transition-all duration-300">
+      
+      <!-- Reader Header & Controls -->
+      <div class="px-5 py-3.5 border-b border-zinc-800 flex items-center justify-between bg-zinc-950/60 text-xs">
+        <div class="flex items-center gap-3">
+          <span id="modalCategory" class="px-2 py-0.5 rounded text-[11px] font-serif bg-bourbon-950 text-amber-400 border border-bourbon-800/60">テーマ</span>
+          <span id="modalReadTime" class="text-zinc-400 font-mono text-[11px]">約2分</span>
+        </div>
+
+        <!-- Customizer tools -->
+        <div class="flex items-center gap-2 sm:gap-3">
+          <!-- Font size toggles -->
+          <div class="flex items-center bg-zinc-900 rounded-lg p-0.5 border border-zinc-700/60">
+            <button onclick="changeFontSize(-1)" class="px-2 py-1 text-zinc-400 hover:text-white text-xs">小</button>
+            <button onclick="changeFontSize(1)" class="px-2 py-1 text-zinc-400 hover:text-white text-xs">大</button>
+          </div>
+          <!-- Theme toggle -->
+          <button onclick="toggleReaderTheme()" id="themeBtn" class="p-1.5 rounded-lg text-zinc-400 hover:text-amber-200 bg-zinc-900 border border-zinc-700/60" title="和紙/夜間テーマ">
+            <i data-lucide="palette" class="w-3.5 h-3.5"></i>
+          </button>
+          <!-- Close button -->
+          <button onclick="closeReaderModal()" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Reader Body Scroll -->
+      <div id="readerScrollArea" class="flex-grow overflow-y-auto p-6 sm:p-10 font-serif">
+        <div class="max-w-xl mx-auto">
+          <h2 id="modalTitle" class="text-2xl sm:text-3xl font-serif font-bold text-amber-50 tracking-wide mb-3 leading-snug"></h2>
+          <div class="text-xs text-bourbon-400 mb-8 pb-4 border-b border-zinc-800/80 flex items-center justify-between">
+            <span id="modalSubtitle">男の日常のひとコマ</span>
+            <span id="modalDate" class="text-zinc-400 font-mono"></span>
+          </div>
+
+          <!-- Content Paragraphs -->
+          <div id="modalBody" class="reader-text leading-relaxed text-zinc-200 space-y-6 text-base tracking-wide selection:bg-amber-700">
+            <!-- Injected by JS -->
+          </div>
+
+          <div class="my-10 text-center">
+            <span class="inline-block w-8 h-[1px] bg-bourbon-600/60"></span>
+          </div>
+
+          <!-- Epilogue / Bitter quote -->
+          <div id="modalQuote" class="p-4 rounded-xl bg-bourbon-950/40 border-l-2 border-bourbon-500 text-xs sm:text-sm italic text-amber-200/80 font-serif">
+          </div>
+        </div>
+      </div>
+
+      <!-- Reader Footer Actions -->
+      <div class="px-5 py-3.5 border-t border-zinc-800 bg-zinc-950/80 flex items-center justify-between text-xs">
+        <div class="flex items-center gap-3">
+          <button id="modalToastBtn" onclick="toggleToastLike()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-amber-200 transition">
+            <i data-lucide="wine" class="w-3.5 h-3.5 text-bourbon-400"></i>
+            <span>乾杯</span>
+            <span id="modalCheersCount" class="font-mono text-zinc-400">24</span>
+          </button>
+          <button id="modalSaveBtn" onclick="toggleSaveCurrent()" class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-zinc-300 transition">
+            <i data-lucide="bookmark" id="modalSaveIcon" class="w-3.5 h-3.5"></i>
+            <span id="modalSaveText">保存</span>
+          </button>
+        </div>
+
+        <button onclick="shareCurrentStory()" class="flex items-center gap-1.5 text-zinc-400 hover:text-amber-300 transition">
+          <i data-lucide="share-2" class="w-3.5 h-3.5"></i>
+          <span>一節をシェア</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Notification Toast message box -->
+  <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-300 bg-bourbon-900 border border-bourbon-600 text-amber-100 text-xs px-4 py-3 rounded-xl shadow-2xl flex items-center gap-2 pointer-events-none">
+    <i data-lucide="check-circle-2" class="w-4 h-4 text-amber-300"></i>
+    <span id="toastMsg">通知メッセージ</span>
+  </div>
+
+  <!-- Footer -->
+  <footer class="mt-auto border-t border-zinc-900 bg-[#070b13] py-8 text-center text-xs text-zinc-400 font-serif">
+    <div class="max-w-6xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <div class="flex items-center gap-2">
+        <span class="text-amber-400 font-bold tracking-widest">LAST CALL</span>
+        <span>— 明日を戦う40代の男たちへ捧ぐ。</span>
+      </div>
+      <p class="text-zinc-400 text-[11px]">※物語はフィクションであり、実在の人物・団体とは関係ありません。飲みすぎにはご注意ください。</p>
+    </div>
+  </footer>
+
+  <script>
+    /* ============================================================
+       PRE-SEEDED SHORT STORIES (Tailored specifically for 40s men)
+       ============================================================ */
+    const INITIAL_STORIES = [
+      {
+        id: 'story-1',
+        category: 'management',
+        categoryLabel: '中間管理職の黄昏',
+        title: '赤鉛筆と、新入社員の退職届',
+        readTime: '2分',
+        date: '2026.10.15',
+        cheers: 86,
+        isCheered: false,
+        summary: '24歳の部下から届いた簡潔すぎるチャット。昔、徹夜で修正された企画書の赤ペンを思い出しながら、冷めた缶コーヒーを煽る。',
+        body: `「お話があります」というチャットが届いたのは、金曜日の午後五時三分だった。\n\n今年配属されたばかりの木村は、要領がよく、残業もしない。かつて終電を逃してデスクの下で始発を待った俺たちの時代とは違うと自分に言い聞かせていた。\n\n喫茶店で差し出された白い封筒は、角がぴんと立っていて、驚くほど軽かった。\n「次のところで、やりたいことがあるんです」\n責める言葉など一つも持ち合わせていなかった。木村の目は澄んでいて、どこにも淀みがない。\n\n二十年前、課長に怒鳴られ、赤鉛筆で真っ赤に塗りつぶされた企画書を握りしめて新橋のガード下で泣いた自分を思い出す。あの時の自分は惨めだったが、今の自分はどうだろう。理不尽に耐え、丸くなり、傷つかない言い回しばかり覚えた四十代の背中は、あいつの目にどう映ったのだろうか。\n\n「そっか。次のとこでも、無理すんなよ」\n口から出たのは、ありきたりな大人のセリフだった。\n\nオフィスに戻り、誰もいなくなった給湯室で冷めた缶コーヒーを一口飲む。苦味だけが、妙に舌に残った。`,
+        quote: '理不尽に耐えることが強さだと思っていた。だが、軽やかに去っていく若者の背中を見送るのもまた、今の俺たちの仕事なのかもしれない。'
+      },
+      {
+        id: 'story-2',
+        category: 'family',
+        categoryLabel: '父と娘の距離',
+        title: '既読のつかない金曜日',
+        readTime: '2分',
+        date: '2026.10.22',
+        cheers: 142,
+        isCheered: false,
+        summary: '高校生になった娘の部屋から漂う甘い香水。洗濯物を分けられた日からの、遠くて近い距離感。',
+        body: `いつからだったか、娘が「パパ」と呼ぶのをやめ、「ねえ」になったのは。\n\n高校二年生の美咲の部屋の前を通ると、自分が学生時代には知らなかった甘い柔軟剤のような香水のような匂いがする。かつて公園で肩車をして、「パパ高ーい！」と無邪気に笑っていた小さな掌の感触を、俺の手のひらはまだ覚えている。\n\n今日の夕方、部活帰りに雨が降ってきたので、「駅まで車で迎えに行こうか？」とLINEを送った。\n二十分経っても既読はつかない。時計の針は十九時を回っていた。\n\n結局、濡れずに帰ってきた美咲の手には、友達とお揃いのビニール傘があった。\n「あ、LINE見てなかった」\nそれだけ言って、さっさと自分の部屋に引っ込んでしまう。\n\n妻が「思春期なんだから仕方ないでしょ」と笑いながら冷奴を差し出す。\n寂しいんじゃない。ただ、無性に時の流れが早すぎて眩暈がするのだ。\n風呂上がりに鏡を見る。生え際に増えた白髪。俺は確実に歳を取り、娘は大人になっていく。それだけのことなのに、夜のハイボールは少しだけ炭酸が抜けていた。`,
+        quote: '守るべきものは変わらないのに、差し伸べた手の置き場に迷うのが、四十代の父親という生き物だ。'
+      },
+      {
+        id: 'story-3',
+        category: 'nostalgia',
+        categoryLabel: '20年前のあいつと夢',
+        title: 'ハードケースのストラトキャスター',
+        readTime: '3分',
+        date: '2026.10.28',
+        cheers: 198,
+        isCheered: false,
+        summary: 'クローゼットの奥に眠るエレキギター。かつて武道館を目指し、いまや住宅ローンの残高を眺める男の休日。',
+        body: `衣替えのついでに、クローゼットの奥から黒いハードケースを引っ張り出した。\n留め金をパチンと弾くと、埃と古い木材の匂いが立ち上る。フェンダーのストラトキャスター。二十五歳の時、給料三ヶ月分を叩いて買った相棒だ。\n\n当時組んでいたバンドのボーカルだったタケシは、今や地元で三代続く工務店の社長をしている。二年前の同窓会で会った時、腹回りは立派になり、名刺には「代表取締役」の文字があった。「お前、まだ弾いてんの？」と聞かれ、「いや、たまにな」と嘘をついた。\n\n弦は錆びて茶色くなっていた。指を滑らせてみる。指先のタコはとっくに消え去り、Fのコードを押さえるだけで人差し指が悲鳴をあげる。\n「うるさくしないでよ、近所迷惑だから」\nリビングから妻の声が飛ぶ。\n\nアンプには繋がず、生音でカッティングを一つ鳴らしてみる。ペキペキと情けない乾いた音が六畳の寝室に響いた。\nだが、不思議と嫌な気はしなかった。あの頃の情熱を切り売りしながら、俺は家族を養い、家を買い、毎月のローンを返済している。夢を捨てたんじゃない。形を変えて、守り抜いているだけだ。\n\n弦を緩め、そっとケースを閉じる。カチリと音がした。明日も朝七時の電車に乗る。俺の今の戦場は、そこにある。`,
+        quote: '諦めたんじゃない。俺たちはあの頃よりずっと重いものを背負って、堂々と立っている。'
+      },
+      {
+        id: 'story-4',
+        category: 'den',
+        categoryLabel: '居酒屋・サウナ・隠れ家',
+        title: '水風呂の十二分計',
+        readTime: '2分',
+        date: '2026.11.01',
+        cheers: 112,
+        isCheered: false,
+        summary: '言葉を交わさない男たちの静寂。九十度の熱気と十六度の水風呂が、背負い込んだ肩の荷を溶かしていく。',
+        body: `土曜日の夕暮れ。家族が買い物に出かけた隙に、自転車を飛ばして駅前の古い銭湯サウナへ向かう。これが一週間に一度、俺に許された聖域だ。\n\nサウナ室の薄暗い灯りの中、男たちが等間隔で座っている。誰も一言も喋らない。\nテレビではどうでもいいバラエティ番組が流れているが、誰も画面を見ていない。じっと目を閉じ、十二分計の針が一周するのを待っている。\n\n隣に座る五十代と思しき男の肩には、湿布の剥がし跡があった。向かいの若者は何かに耐えるように拳を握りしめている。\n役職も年収も、家庭の愚痴も、ここには持ち込めない。ただの汗を流す肉体として、同じ熱気に晒されている。\n\n限界まで身体を温めたあとの水風呂。首まで浸かり、息を深く吐き出す。\n「ふぅ……」\n冷気が骨の髄まで染み渡り、皮膚がピリリと引き締まる。\n露天スペースのプラスチック椅子に深く腰掛け、空を見上げる。住宅街のビルの隙間から、一番星が見えた。\n\n頭の中の雑音が消えていく。月曜日の会議の資料も、上司の嫌味も、全部どうでもよくなる。生きている。ただそれだけで十分じゃないかと、四十を過ぎてようやく思えるようになった。`,
+        quote: '言葉のない連帯感。ぬるい慰めよりも、冷たい水風呂の吐息こそが男を再生させる。'
+      },
+      {
+        id: 'story-5',
+        category: 'aging',
+        categoryLabel: '身体と老いとプライド',
+        title: 'メガネを頭に乗せる夜',
+        readTime: '2分',
+        date: '2026.10.10',
+        cheers: 95,
+        isCheered: false,
+        summary: 'スマホを少し離して見る仕草に気づいた日。抗うのをやめた瞬間、大人の男の余裕が始まる。',
+        body: `認めたくなかった。\n文庫本の文字がぼやけるのは、昨晩の残業のせいで目が疲れているだけだと思い込もうとしていた。\n\nだが、薄暗い居酒屋のメニューで「本日のおすすめ」を読もうとした時、無意識に腕を前へ伸ばしている自分に気づいた。向かいにいた後輩が、クスッと笑って言った。\n「部長、それ、そろそろ老眼鏡の出番っすよ」\n「バカ言え、まだ四十代前半だぞ」\n強がってみせたものの、手元の「〆鯖の炙り」の文字はかすんで二重に見えていた。\n\n週末、ショッピングモールの片隅にある眼鏡屋の敷居を、まるで秘密結社に入るような緊張感で跨いだ。店員に勧められたのは、チタンフレームの落ち着いたデザインだった。\n「最近のレンズは境目が見えませんから、周りにも気づかれませんよ」\n出来上がった眼鏡をかけて、文庫本を開いた瞬間、視界が鮮やかに蘇った。\n\n家でハイボールを飲みながら、妻に「どう？」と見せてみる。\n「あら、知的に見えていいじゃない。パパ、昔より今のほうが似合うかも」\n老いることは退化ではない。抗うのをやめた時、男にはまた別の味わいが宿る。グラスを傾けながら、頭の上にすっと眼鏡を押し上げた。悪くない夜だった。`,
+        quote: '白髪も老眼も、男が人生と格闘してきた証拠の勲章だ。隠す必要なんてどこにもない。'
+      }
+    ];
+
+    /* ============================================================
+       STATE MANAGEMENT
+       ============================================================ */
+    let currentFilter = 'all';
+    let savedStories = JSON.parse(localStorage.getItem('lastcall_saved') || '[]');
+    let allStories = [...INITIAL_STORIES];
+
+    // Read stored stories if created before
+    const userGenerated = JSON.parse(localStorage.getItem('lastcall_custom_stories') || '[]');
+    allStories = [...userGenerated, ...allStories];
+
+    let currentReadingStory = null;
+    let readerFontSizeLevel = 1; // 0: small, 1: normal, 2: large
+    let readerTheme = 'dark'; // 'dark' | 'sepia'
+
+    // Ambient audio context
+    let audioCtx = null;
+    let activeNodes = [];
+    let currentAmbient = null;
+
+    /* ============================================================
+       INITIALIZATION
+       ============================================================ */
+    window.addEventListener('DOMContentLoaded', () => {
+      renderFeed();
+      renderLibrary();
+      updateSavedBadge();
+      lucide.createIcons();
+    });
+
+    /* ============================================================
+       NAVIGATION & TABS
+       ============================================================ */
+    function switchTab(tabId) {
+      ['feed', 'generator', 'library'].forEach(id => {
+        const view = document.getElementById(`view-${id}`);
+        const nav = document.getElementById(`nav-${id}`);
+        if (id === tabId) {
+          view.classList.remove('hidden');
+          nav.classList.add('text-amber-300', 'bg-bourbon-900/60', 'border-bourbon-700/50');
+          nav.classList.remove('text-zinc-400');
+        } else {
+          view.classList.add('hidden');
+          nav.classList.remove('text-amber-300', 'bg-bourbon-900/60', 'border-bourbon-700/50');
+          nav.classList.add('text-zinc-400');
+        }
+      });
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    /* ============================================================
+       FEED RENDERING & FILTER
+       ============================================================ */
+    function filterCategory(cat) {
+      currentFilter = cat;
+      // Update pill styles
+      document.querySelectorAll('.cat-pill').forEach(btn => {
+        btn.classList.remove('bg-bourbon-500', 'text-white');
+        btn.classList.add('bg-zinc-900/90', 'text-zinc-400');
+      });
+      event?.target?.classList?.remove('bg-zinc-900/90', 'text-zinc-400');
+      event?.target?.classList?.add('bg-bourbon-500', 'text-white');
+      renderFeed();
+    }
+
+    function renderFeed() {
+      const grid = document.getElementById('storiesGrid');
+      grid.innerHTML = '';
+
+      const filtered = currentFilter === 'all' 
+        ? allStories 
+        : allStories.filter(s => s.category === currentFilter);
+
+      filtered.forEach(story => {
+        const isSaved = savedStories.includes(story.id);
+        const card = document.createElement('article');
+        card.className = "bg-[#101420] border border-bourbon-900/40 rounded-2xl p-6 flex flex-col justify-between hover:border-bourbon-600/60 transition-all duration-300 hover:shadow-xl hover:shadow-bourbon-950/40 group relative";
+        
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between text-xs mb-3 text-zinc-400">
+              <span class="px-2.5 py-0.5 rounded-full bg-bourbon-950 border border-bourbon-800/80 text-amber-300 font-serif text-[11px]">${story.categoryLabel}</span>
+              <span class="text-zinc-400 font-mono text-[11px]">${story.readTime}</span>
+            </div>
+            <h3 class="text-lg font-serif font-bold text-amber-50 group-hover:text-amber-300 transition-colors leading-snug cursor-pointer mb-2" onclick="openReader('${story.id}')">
+              ${story.title}
+            </h3>
+            <p class="text-xs text-zinc-400 line-clamp-3 leading-relaxed font-sans mb-4">
+              ${story.summary}
+            </p>
+          </div>
+
+          <div class="pt-4 border-t border-zinc-800/80 flex items-center justify-between text-xs">
+            <div class="flex items-center gap-3">
+              <button onclick="handleCheers('${story.id}', event)" class="flex items-center gap-1.5 text-zinc-400 hover:text-amber-300 transition ${story.isCheered ? 'text-amber-300 font-bold' : ''}">
+                <i data-lucide="wine" class="w-3.5 h-3.5 ${story.isCheered ? 'text-amber-300' : 'text-bourbon-400'}"></i>
+                <span class="cheers-count font-mono">${story.cheers}</span>
+              </button>
+              <button onclick="handleBookmark('${story.id}', event)" class="flex items-center gap-1 text-zinc-400 hover:text-amber-200 transition ${isSaved ? 'text-bourbon-400' : ''}">
+                <i data-lucide="${isSaved ? 'bookmark-check' : 'bookmark'}" class="w-3.5 h-3.5"></i>
+                <span>${isSaved ? '保存済' : '保存'}</span>
+              </button>
+            </div>
+            <button onclick="openReader('${story.id}')" class="text-amber-400 hover:text-amber-200 font-serif flex items-center gap-1 text-xs">
+              <span>読む</span>
+              <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+
+      lucide.createIcons();
+    }
+
+    /* ============================================================
+       READER MODAL LOGIC
+       ============================================================ */
+    function openReader(storyId) {
+      const story = allStories.find(s => s.id === storyId);
+      if (!story) return;
+      currentReadingStory = story;
+
+      document.getElementById('modalTitle').textContent = story.title;
+      document.getElementById('modalCategory').textContent = story.categoryLabel;
+      document.getElementById('modalReadTime').textContent = story.readTime;
+      document.getElementById('modalDate').textContent = story.date || '2026.AUTUMN';
+      document.getElementById('modalCheersCount').textContent = story.cheers;
+      
+      const quoteEl = document.getElementById('modalQuote');
+      if (story.quote) {
+        quoteEl.innerHTML = `<span class="block text-bourbon-400 font-bold text-xs uppercase tracking-wider mb-1">— 今夜の言葉</span>"${story.quote}"`;
+        quoteEl.classList.remove('hidden');
+      } else {
+        quoteEl.classList.add('hidden');
+      }
+
+      // Format body text with paragraphs
+      const bodyEl = document.getElementById('modalBody');
+      bodyEl.innerHTML = story.body.split('\n\n').map(p => `<p class="indent-4 leading-relaxed">${p}</p>`).join('');
+
+      // Update bookmark button state
+      updateModalBookmarkState();
+
+      // Show modal
+      const modal = document.getElementById('readerModal');
+      modal.classList.remove('hidden');
+      document.body.style.overflow = 'hidden';
+      document.getElementById('readerScrollArea').scrollTop = 0;
+      lucide.createIcons();
+    }
+
+    function closeReaderModal() {
+      document.getElementById('readerModal').classList.add('hidden');
+      document.body.style.overflow = '';
+      currentReadingStory = null;
+    }
+
+    function updateModalBookmarkState() {
+      if (!currentReadingStory) return;
+      const isSaved = savedStories.includes(currentReadingStory.id);
+      const btn = document.getElementById('modalSaveBtn');
+      const text = document.getElementById('modalSaveText');
+      const icon = document.getElementById('modalSaveIcon');
+
+      if (isSaved) {
+        text.textContent = '保存済み';
+        btn.classList.add('text-bourbon-400', 'border-bourbon-700');
+        icon.setAttribute('data-lucide', 'bookmark-check');
+      } else {
+        text.textContent = '保存';
+        btn.classList.remove('text-bourbon-400', 'border-bourbon-700');
+        icon.setAttribute('data-lucide', 'bookmark');
+      }
+      lucide.createIcons();
+    }
+
+    function toggleSaveCurrent() {
+      if (!currentReadingStory) return;
+      handleBookmark(currentReadingStory.id);
+      updateModalBookmarkState();
+    }
+
+    function toggleToastLike() {
+      if (!currentReadingStory) return;
+      currentReadingStory.cheers += 1;
+      currentReadingStory.isCheered = true;
+      document.getElementById('modalCheersCount').textContent = currentReadingStory.cheers;
+      showToast('グラスを掲げました。乾杯。');
+      renderFeed();
+    }
+
+    function changeFontSize(delta) {
+      readerFontSizeLevel = Math.max(0, Math.min(2, readerFontSizeLevel + delta));
+      const body = document.getElementById('modalBody');
+      body.classList.remove('text-sm', 'text-base', 'text-lg');
+      if (readerFontSizeLevel === 0) body.classList.add('text-sm');
+      if (readerFontSizeLevel === 1) body.classList.add('text-base');
+      if (readerFontSizeLevel === 2) body.classList.add('text-lg');
+    }
+
+    function toggleReaderTheme() {
+      const container = document.getElementById('readerContainer');
+      if (readerTheme === 'dark') {
+        readerTheme = 'sepia';
+        container.classList.remove('bg-[#0e131d]', 'text-zinc-200');
+        container.classList.add('bg-[#1a140f]', 'text-amber-100', 'border-bourbon-700');
+        showToast('アンバー（珈琲）配色に切り替えました');
+      } else {
+        readerTheme = 'dark';
+        container.classList.remove('bg-[#1a140f]', 'text-amber-100', 'border-bourbon-700');
+        container.classList.add('bg-[#0e131d]', 'text-zinc-200');
+        showToast('ミッドナイト配色に切り替えました');
+      }
+    }
+
+    function shareCurrentStory() {
+      if (!currentReadingStory) return;
+      const text = `『${currentReadingStory.title}』\n${currentReadingStory.quote || currentReadingStory.summary}\n#LASTCALL #40代の黄昏`;
+      
+      // Fallback copy
+      const dummy = document.createElement('textarea');
+      document.body.appendChild(dummy);
+      dummy.value = text;
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+
+      showToast('引用テキストをクリップボードにコピーしました');
+    }
+
+    /* ============================================================
+       CHEERS & BOOKMARK ACTIONS
+       ============================================================ */
+    function handleCheers(id, e) {
+      if (e) e.stopPropagation();
+      const story = allStories.find(s => s.id === id);
+      if (!story) return;
+      if (!story.isCheered) {
+        story.cheers += 1;
+        story.isCheered = true;
+        showToast('今夜の物語に「乾杯」を贈りました');
+      }
+      renderFeed();
+    }
+
+    function handleBookmark(id, e) {
+      if (e) e.stopPropagation();
+      const idx = savedStories.indexOf(id);
+      if (idx > -1) {
+        savedStories.splice(idx, 1);
+        showToast('書斎から取り出しました');
+      } else {
+        savedStories.push(id);
+        showToast('書斎の栞に挟みました');
+      }
+      localStorage.setItem('lastcall_saved', JSON.stringify(savedStories));
+      updateSavedBadge();
+      renderFeed();
+      renderLibrary();
+    }
+
+    function updateSavedBadge() {
+      const badge = document.getElementById('nav-saved-count');
+      const count = savedStories.length;
+      if (count > 0) {
+        badge.textContent = count;
+        badge.classList.remove('hidden');
+      } else {
+        badge.classList.add('hidden');
+      }
+      const libCount = document.getElementById('libraryCountText');
+      if (libCount) libCount.textContent = `${count} 編保存中`;
+    }
+
+    function renderLibrary() {
+      const grid = document.getElementById('libraryGrid');
+      const empty = document.getElementById('libraryEmptyState');
+      grid.innerHTML = '';
+
+      const savedList = allStories.filter(s => savedStories.includes(s.id));
+
+      if (savedList.length === 0) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+
+      savedList.forEach(story => {
+        const card = document.createElement('article');
+        card.className = "bg-[#101420] border border-bourbon-900/60 rounded-2xl p-6 flex flex-col justify-between hover:border-bourbon-600 transition shadow-lg";
+        card.innerHTML = `
+          <div>
+            <div class="flex items-center justify-between text-xs mb-3 text-zinc-400">
+              <span class="px-2 py-0.5 rounded bg-bourbon-950 text-amber-400 font-serif text-[11px]">${story.categoryLabel}</span>
+              <span class="font-mono text-zinc-400">${story.readTime}</span>
+            </div>
+            <h3 class="text-base font-serif font-bold text-amber-100 hover:text-amber-300 cursor-pointer mb-2" onclick="openReader('${story.id}')">
+              ${story.title}
+            </h3>
+            <p class="text-xs text-zinc-400 line-clamp-3 leading-relaxed mb-4">
+              ${story.summary}
+            </p>
+          </div>
+          <div class="pt-3 border-t border-zinc-800 flex items-center justify-between text-xs">
+            <button onclick="handleBookmark('${story.id}', event)" class="text-xs text-red-400 hover:text-red-300 flex items-center gap-1">
+              <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+              <span>削除</span>
+            </button>
+            <button onclick="openReader('${story.id}')" class="text-amber-400 hover:text-amber-200 font-serif flex items-center gap-1">
+              <span>再読する</span>
+              <i data-lucide="book-open" class="w-3.5 h-3.5"></i>
+            </button>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+      lucide.createIcons();
+    }
+
+    /* ============================================================
+       DYNAMIC HIGH-RESONANCE GENERATOR ENGINE
+       ============================================================ */
+    let lastGeneratedStoryObj = null;
+
+    const GENERATOR_TEMPLATES = {
+      management: {
+        titles: [
+          "{keyword}と、終電前の居酒屋ミーティング",
+          "四十にして迷う、{keyword}の重み",
+          "名刺入れの角が擦り切れる頃に",
+          "理不尽の受け流し方と、{keyword}"
+        ],
+        snippets: [
+          "役職定年という言葉が、社内の噂話ではなく現実味を帯びて聞こえ始めたのはいつからだろう。上からの無茶振りと、部下の権利主張の間で、俺たちの世代はいつだってクッションの役割を果たしてきた。",
+          "ふと手帳を開くと、予定表は会議と根回しで真っ黒に埋まっていた。二十代の頃に思い描いていた「頼れる大人」に、自分は本当になれているのだろうか。ふと触れた{keyword}の冷たさが、現実へと引き戻す。",
+          "夜の居酒屋で一人、お通しの枝豆をつまみながらスマホを眺める。家族グループのLINEには、妻からの『牛乳買ってきて』の一言だけ。だが、それが今の俺の守るべき日常のすべてでもある。"
+        ],
+        quotes: [
+          "誰にも褒められなくてもいい。明日も時間通りに出社する、それだけで十分戦士だ。",
+          "板挟みの痛みを知る男だけが、本当の優しさをポケットに忍ばせることができる。"
+        ]
+      },
+      family: {
+        titles: [
+          "娘のイヤホンと、{keyword}",
+          "背丈を追い越された日曜日の朝",
+          "妻の淹れた薄いコーヒーと{keyword}",
+          "父の背中を見せることの難しさについて"
+        ],
+        snippets: [
+          "休日のリビング。娘は耳にワイヤレスイヤホンを差し込んだまま、スマホの画面に笑いかけている。話しかけようとして、喉元で言葉を飲み込んだ。何を話せば嫌われないか、そんな計算を自分の家族相手にする日が来るとは思わなかった。",
+          "クローゼットを片付けていると、小さくなった幼稚園の黄色い帽子と{keyword}が出てきた。あの頃、手をつないで近所のスーパーへ行っただけで、世界中の幸せを手に入れたような顔をしていたあの子は、もうすぐ大人になる。",
+          "夕食の席、妻が『最近、白髪増えたんじゃない？』と何気なく言う。減塩の味噌汁をすすりながら、『苦労させてるからな』と笑い合える関係だけが、嵐のような子育ての後に残った宝物かもしれない。"
+        ],
+        quotes: [
+          "遠ざかる子供の背中を、ただ静かに見守る覚悟。それが父親の最後の仕事だ。",
+          "言葉数が減っても、玄関に揃えられた靴を見れば伝わる愛情がある。"
+        ]
+      },
+      nostalgia: {
+        titles: [
+          "20年前のカセットテープと{keyword}",
+          "あいつが手放したクラウン",
+          "ガレージの奥にしまった夢の跡",
+          "同窓会の案内状をゴミ箱へ捨てる夜"
+        ],
+        snippets: [
+          "深夜のラジオから、大学時代に擦り切れるほど聴いたロックナンバーが流れてきた。夜更けの首都高を友人とボロい軽四で流し、何者かになれると信じて疑わなかった、あの根拠のない自信はどこへ消えたのだろう。",
+          "引き出しの奥から出てきた{keyword}を手のひらに載せてみる。あいつと朝まで夢を語り明かしたあの夜、俺たちは世界を変えられる気でいた。あいつは今、地方の信用金庫で支店長代理をやっているという。",
+          "年賀状だけの付き合いになってしまった友人たちの顔が浮かぶ。妥協と呼ぶにはあまりに美しく、諦めと呼ぶにはあまりに愛おしい、それぞれの人生の選択肢。"
+        ],
+        quotes: [
+          "手放した夢を振り返るな。今の平穏な暮らしを築いたのは、他の誰でもないお前だ。",
+          "あの日の青臭い熱情は、消えたのではない。今の男の深みとなって沈殿している。"
+        ]
+      },
+      den: {
+        titles: [
+          "暖簾をくぐれば、{keyword}の匂い",
+          "90度の蒸気と、男の沈黙",
+          "ひとり呑みの作法と{keyword}",
+          "深夜二時のカウンター席"
+        ],
+        snippets: [
+          "誰とも会話を交わさず、瓶ビールの手酌で始めるカウンターの夜。赤提灯の光が、くたびれたスーツの袖口を優しく照らしている。ここでは肩書も年収も関係ない。ただの喉の渇いた客の一人だ。",
+          "サウナの熱気の中、皮膚から汗が噴き出すとともに、今日一日浴びた嫌味や焦りが毛穴から抜けていく気がする。水風呂に身を沈め、{keyword}を思い浮かべながら、肺の中の空気をすべて吐き出す。",
+          "深夜の帰り道、コンビニの明かりに吸い寄せられるように立ち寄る。アイスを一本買って、夜風に当たりながら齧る。四十男の小さな逃げ場は、こんな些細な隙間に転がっている。"
+        ],
+        quotes: [
+          "孤独を愛せるようになって、男の一杯は本当の旨さを宿す。",
+          "何も言わずにただ酒を出す、あの店のマスターのような大人が理想だった。"
+        ]
+      },
+      aging: {
+        titles: [
+          "人間ドックの判定Bと、{keyword}",
+          "曲がらない膝、曲げられない意地",
+          "枕元の老眼鏡と深夜の読書",
+          "白髪染めをやめた日の朝"
+        ],
+        snippets: [
+          "健康診断の結果通知書を開く時の鼓動の速さは、若い頃の合否発表以上だ。要再検査の項目を指でなぞりながら、かつて朝まで飲んで平気で出社していた肉体は、もう別の生き物なのだと悟る。",
+          "洗面所の鏡の前で、ため息をつきながら{keyword}を手にとる。ほうれい線も、目尻の笑いジワも、俺が家族のために笑い、仕事に歯を食いしばってきた年輪だと思えば、そう悪くもない。",
+          "朝のウォーキングですれ違う同世代の男たち。誰もが少し重そうな足取りで、それでも前を向いて一歩を踏み出している。お互い、ガタが来ながらも生き抜こうじゃないか。"
+        ],
+        quotes: [
+          "老いていくことを嘆く暇があるなら、皺の数だけ器の大きな男になればいい。",
+          "衰えた身体でなお背筋を伸ばす姿にこそ、四十代の真の美学がある。"
+        ]
+      },
+      romance: {
+        titles: [
+          "雨の交差点と、{keyword}の記憶",
+          "言えなかった言葉の行方",
+          "煙草の煙と、遠い日の約束",
+          "二十五時のラストオーダー"
+        ],
+        snippets: [
+          "雨に濡れたアスファルトに街灯が反射する夜。ふとした拍子に思い出す女性の笑顔がある。もしあの時、別の選択をしていたらどうなっていただろうか。{keyword}を見つめながら、答の出ない問いを飲み込む。",
+          "今さら連絡を取る気もない。ただ、彼女がどこかで幸せに笑っていてくれればいいと、素直に祈れるようになった。これが歳をとるということの、唯一の美点かもしれない。",
+          "バーの片隅、グラスの氷がカランと音を立てる。過ぎ去った日々のすべてに、静かに別れを告げる時間。"
+        ],
+        quotes: [
+          "届かなかった恋こそが、男の心に一番純粋な泉を残してくれる。",
+          "未練ではない。あの頃の不器用な自分を、そっと許してやるための夜だ。"
+        ]
+      }
+    };
+
+    const RANDOM_KEYWORDS = [
+      '赤提灯の熱燗', 'カシオのG-SHOCK', '古ぼけたスニーカー', '深夜のコインランドリー',
+      '娘の冷たいLINE', '擦り切れた名刺入れ', '冷めた缶コーヒー', '雨の日のワイパー',
+      '水風呂の吐息', '文庫本の栞', '白髪染めの匂い', '夜更けのカップラーメン'
+    ];
+
+    function randomizeKeyword() {
+      const kw = RANDOM_KEYWORDS[Math.floor(Math.random() * RANDOM_KEYWORDS.length)];
+      document.getElementById('genKeyword').value = kw;
+    }
+
+    function setKeyword(val) {
+      document.getElementById('genKeyword').value = val;
+    }
+
+    function handleGenerate(e) {
+      e.preventDefault();
+      const cat = document.querySelector('input[name="genCategory"]:checked').value;
+      const tone = document.querySelector('input[name="genTone"]:checked').value;
+      let keyword = document.getElementById('genKeyword').value.trim();
+      if (!keyword) {
+        keyword = RANDOM_KEYWORDS[Math.floor(Math.random() * RANDOM_KEYWORDS.length)];
+      }
+
+      const btn = document.getElementById('generateBtn');
+      const origContent = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = `<i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i><span>男の物語を紡いでいます...</span>`;
+      lucide.createIcons();
+
+      setTimeout(() => {
+        const pool = GENERATOR_TEMPLATES[cat] || GENERATOR_TEMPLATES.management;
+        const titleTpl = pool.titles[Math.floor(Math.random() * pool.titles.length)];
+        const title = titleTpl.replace('{keyword}', keyword);
+
+        const snip1 = pool.snippets[0].replace(/{keyword}/g, keyword);
+        const snip2 = pool.snippets[1].replace(/{keyword}/g, keyword);
+        const snip3 = pool.snippets[2].replace(/{keyword}/g, keyword);
+        const quote = pool.quotes[Math.floor(Math.random() * pool.quotes.length)];
+
+        let toneAdjust = "";
+        if (tone === 'bittersweet') {
+          toneAdjust = "夜風は冷たく、街は眠りにつこうとしている。ほろ苦い胸の痛みを抱えたまま、男はネクタイを少しだけ緩めた。";
+        } else if (tone === 'pride') {
+          toneAdjust = "誰に認められずとも、俺は俺のやり方で今日一日を耐え抜いた。胸を張り、明日の朝もまた同じ電車に乗るだけだ。";
+        } else if (tone === 'hope') {
+          toneAdjust = "ふと見上げた空には、雲の切れ間から静かな月が見えていた。悪くない。明日も、もう少しだけ踏ん張ってみるか。";
+        } else {
+          toneAdjust = "『まあ、人生こんなもんだろ』と声に出してみると、思わず小さく吹き出してしまった。不器用な自分に、乾杯。";
+        }
+
+        const generatedBody = `${snip1}\n\n${snip2}\n\n${snip3}\n\n${toneAdjust}`;
+
+        const catLabels = {
+          management: '中間管理職の黄昏',
+          family: '父と娘・家族の距離',
+          nostalgia: '手放した夢・旧友',
+          den: '赤提灯とサウナの聖域',
+          aging: '老いと健康・男の意地',
+          romance: 'すれ違いの残像'
+        };
+
+        const storyObj = {
+          id: 'custom-' + Date.now(),
+          category: cat,
+          categoryLabel: catLabels[cat] || '男の掌編',
+          title: title,
+          readTime: '2分',
+          date: '2026.NEW',
+          cheers: 1,
+          isCheered: false,
+          summary: generatedBody.slice(0, 75) + '...',
+          body: generatedBody,
+          quote: quote
+        };
+
+        lastGeneratedStoryObj = storyObj;
+
+        // Render preview in generator view
+        document.getElementById('resTitle').textContent = storyObj.title;
+        document.getElementById('resTag').textContent = storyObj.categoryLabel + ' • キーワード: ' + keyword;
+        document.getElementById('resBody').textContent = storyObj.body;
+        document.getElementById('genResultWrapper').classList.remove('hidden');
+
+        btn.disabled = false;
+        btn.innerHTML = origContent;
+        lucide.createIcons();
+
+        showToast('新しい物語が完成しました');
+        document.getElementById('genResultWrapper').scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }, 600);
+    }
+
+    function copyGeneratedStory() {
+      if (!lastGeneratedStoryObj) return;
+      const text = `${lastGeneratedStoryObj.title}\n\n${lastGeneratedStoryObj.body}`;
+      const dummy = document.createElement('textarea');
+      document.body.appendChild(dummy);
+      dummy.value = text;
+      dummy.select();
+      document.execCommand('copy');
+      document.body.removeChild(dummy);
+      showToast('掌編をクリップボードにコピーしました');
+    }
+
+    function saveGeneratedStoryToFeed() {
+      if (!lastGeneratedStoryObj) return;
+      
+      // Save to custom stories array in localStorage
+      const userStories = JSON.parse(localStorage.getItem('lastcall_custom_stories') || '[]');
+      userStories.unshift(lastGeneratedStoryObj);
+      localStorage.setItem('lastcall_custom_stories', JSON.stringify(userStories));
+
+      allStories.unshift(lastGeneratedStoryObj);
+      renderFeed();
+      showToast('物語を一覧に追加しました。いつでも読めます。');
+      switchTab('feed');
+    }
+
+    /* ============================================================
+       AMBIENT SOUND SYNTHESIZER (Web Audio API - No external files)
+       ============================================================ */
+    function initAudio() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      if (audioCtx.state === 'suspended') {
+        audioCtx.resume();
+      }
+    }
+
+    function toggleSoundMenu() {
+      const menu = document.getElementById('soundMenu');
+      menu.classList.toggle('hidden');
+    }
+
+    // Close menu when clicking outside
+    document.addEventListener('click', (e) => {
+      const menu = document.getElementById('soundMenu');
+      const toggle = document.getElementById('soundToggleBtn');
+      if (!menu.contains(e.target) && !toggle.contains(e.target)) {
+        menu.classList.add('hidden');
+      }
+    });
+
+    function stopSound() {
+      activeNodes.forEach(node => {
+        try { node.stop(); node.disconnect(); } catch (e) {}
+      });
+      activeNodes = [];
+      currentAmbient = null;
+      updateSoundUI('OFF');
+      showToast('音声を停止しました');
+    }
+
+    function updateSoundUI(label) {
+      const btn = document.getElementById('soundLabel');
+      const icon = document.getElementById('soundIcon');
+      if (label === 'OFF') {
+        btn.textContent = '環境音: OFF';
+        icon.classList.remove('text-amber-400');
+        icon.classList.add('text-zinc-400');
+      } else {
+        btn.textContent = label;
+        icon.classList.remove('text-zinc-400');
+        icon.classList.add('text-amber-400');
+      }
+      // Update options indicator
+      document.querySelectorAll('.sound-option').forEach(opt => {
+        opt.querySelector('.state-indicator').textContent = '再生';
+        opt.classList.remove('bg-bourbon-950/80', 'border-bourbon-700/60');
+      });
+    }
+
+    function setSoundTrack(type) {
+      initAudio();
+      stopSound();
+
+      if (type === 'rain') {
+        createRainSound();
+        updateSoundUI('深夜の雨音');
+        showToast('雨音のアンビエントを開始しました');
+      } else if (type === 'bar') {
+        createBarSound();
+        updateSoundUI('路地裏バー');
+        showToast('バーのざわめきを開始しました');
+      } else if (type === 'cafe') {
+        createCafeSound();
+        updateSoundUI('純喫茶');
+        showToast('喫茶店の針音を開始しました');
+      }
+
+      currentAmbient = type;
+      document.getElementById('soundMenu').classList.add('hidden');
+    }
+
+    // Generates soothing pink noise filtered as rain
+    function createRainSound() {
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let b0 = 0, b1 = 0, b2 = 0, b3 = 0, b4 = 0, b5 = 0, b6 = 0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        b0 = 0.99886 * b0 + white * 0.0555179;
+        b1 = 0.99332 * b1 + white * 0.0750759;
+        b2 = 0.96900 * b2 + white * 0.1538520;
+        b3 = 0.86650 * b3 + white * 0.3104856;
+        b4 = 0.55000 * b4 + white * 0.5329522;
+        b5 = -0.7616 * b5 - white * 0.0168980;
+        data[i] = (b0 + b1 + b2 + b3 + b4 + b5 + b6 + white * 0.5362) * 0.04;
+        b6 = white * 0.115926;
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 850;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.22;
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+
+      activeNodes.push(noise, filter, gain);
+    }
+
+    // Generates subtle low frequency murmur & glass clink simulation
+    function createBarSound() {
+      // Base brown ambient noise
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      let last = 0.0;
+      for (let i = 0; i < bufferSize; i++) {
+        const white = Math.random() * 2 - 1;
+        data[i] = (last + (0.02 * white)) / 1.02;
+        last = data[i];
+        data[i] *= 0.15;
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'bandpass';
+      filter.frequency.value = 350;
+      filter.Q.value = 1.0;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.3;
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+
+      activeNodes.push(noise, filter, gain);
+    }
+
+    // Generates vinyl record dust crackle
+    function createCafeSound() {
+      const bufferSize = audioCtx.sampleRate * 2;
+      const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+      const data = buffer.getChannelData(0);
+      for (let i = 0; i < bufferSize; i++) {
+        if (Math.random() < 0.003) {
+          data[i] = (Math.random() * 2 - 1) * 0.15;
+        } else {
+          data[i] = (Math.random() * 2 - 1) * 0.005;
+        }
+      }
+
+      const noise = audioCtx.createBufferSource();
+      noise.buffer = buffer;
+      noise.loop = true;
+
+      const filter = audioCtx.createBiquadFilter();
+      filter.type = 'highpass';
+      filter.frequency.value = 400;
+
+      const gain = audioCtx.createGain();
+      gain.gain.value = 0.18;
+
+      noise.connect(filter);
+      filter.connect(gain);
+      gain.connect(audioCtx.destination);
+      noise.start();
+
+      activeNodes.push(noise, filter, gain);
+    }
+
+    /* ============================================================
+       TOAST UTILITY
+       ============================================================ */
+    let toastTimeout = null;
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      const toastMsg = document.getElementById('toastMsg');
+      toastMsg.textContent = msg;
+      toast.classList.remove('translate-y-20', 'opacity-0');
+      toast.classList.add('translate-y-0', 'opacity-100');
+
+      if (toastTimeout) clearTimeout(toastTimeout);
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('translate-y-0', 'opacity-100');
+        toast.classList.add('translate-y-20', 'opacity-0');
+      }, 2800);
+    }
+  </script>
+</body>
+</html>
